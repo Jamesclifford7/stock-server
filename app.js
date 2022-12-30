@@ -1,0 +1,170 @@
+const express = require('express')
+const app = express()
+const port = 3000
+const cors = require('cors')
+const mysql = require('mysql2');
+require('dotenv').config();
+const validator = require('email-validator')
+
+app.use(express.json());
+app.use(cors())
+
+const mysqlConnection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: process.env.MYSQL_PASSWORD, 
+  database: "stock_users_db", 
+  connectionLimit: 10, 
+});
+
+mysqlConnection.connect((error)=> {
+  if (error) {
+    console.log('Connection Failed', error);
+  } else {
+    console.log('Connection Established Successfully')
+  }
+});
+
+// get all users
+app.get('/users', (req, res) => {
+  mysqlConnection.query(`SELECT * FROM stock_users_db.users;`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+    
+    res.json(result)
+  })
+})
+
+// get user by id
+app.get('/users/:id', (req, res) => {
+  const id = parseInt(req.params.id)
+
+  mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE id = ${id};`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+    res.json(result)
+  })
+})
+
+// handle login
+app.post('/login', (req, res) => {
+  const {email, password} = req.body
+
+  mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    } else if (result.length === 0) {
+      res.send('User not found')
+    } else {
+      res.json(result)
+    }
+  })
+})
+
+// handle sign up
+app.post('/users', (req, res) => {
+  const { email, password } = req.body
+
+  if (!(validator.validate(email))) {
+    return res
+        .status(400)
+        .send('Please enter a valid email address')
+  }
+
+  if (password.length < 6) {
+    return res
+        .status(400)
+        .send('Password must be at least 6 characters long')       
+  }; 
+
+  if (!password.match(/[A-Z]/)) {
+      return res
+          .status(400)
+          .send('Password must include one uppercase letter')
+  }; 
+
+  if (!password.match(/\d+/g)) {
+      return res  
+          .status(400)
+          .send('Password must include one number' )
+  }; 
+  
+  mysqlConnection.query(`INSERT INTO stock_users_db.users (email, password) VALUES ('${email}', '${password}');`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+
+    if (result.affectedRows === 1) {
+      res.send(`Account created successfully for ${email}`)
+    }
+  })
+})
+
+// get a user's portfolio
+app.get('/stocks/:userid', (req, res) => {
+  const id = parseInt(req.params.userid)
+
+  mysqlConnection.query(`SELECT * FROM stock_users_db.stocks WHERE user_id = '${id}';`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+
+    if (result.length === 0) {
+      res.send('Portfolio is empty')
+    }
+
+    res.json(result)
+  })
+})
+
+// add a stock to user's portfolio
+app.post('/stocks/:userid', (req, res) => {
+  const id = parseInt(req.params.userid)
+  const { stock } = req.body
+
+  mysqlConnection.query(`INSERT INTO stock_users_db.stocks (user_id, stock_name) VALUES ('${id}', '${stock}');`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+
+    if (result.affectedRows === 1) {
+      res.send(`${stock} successfully added to portfolio`)
+    }
+  })
+})
+
+// remove stock from user's portfolio
+app.delete('/stocks/:stockid', (req, res) => {
+  const id = parseInt(req.params.stockid)
+
+  mysqlConnection.query(`DELETE FROM stock_users_db.stocks WHERE (id = ${id});`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+
+    if (result.affectedRows === 1) {
+      res.send('Stock successfully removed from portfolio')
+    }
+  })
+})
+
+// delete user account
+app.delete('/users/:id', (req, res) => {
+  const id = parseInt(req.params.id)
+
+  mysqlConnection.query(`DELETE FROM stock_users_db.users WHERE (id = ${id});`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+
+    if (result.affectedRows === 1) {
+      res.send('Account successfully deleted')
+    }
+  })
+})
+
+app.listen(8000, () => {
+  console.log(`listening on port ${8000}`)
+})
