@@ -124,9 +124,16 @@ app.post('/stocks/:userid', (req, res) => {
     if (error) {
       console.log(error)
     }
+    
 
     if (result.affectedRows === 1) {
-      res.send(`${stock} successfully added to portfolio`)
+      mysqlConnection.query('SELECT * FROM stock_users_db.stocks WHERE (id = LAST_INSERT_ID())', (error, result, fields) => {
+        if (error) {
+          console.log(error)
+        }
+
+        res.json(result[0])
+      })
     }
   })
 })
