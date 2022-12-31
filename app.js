@@ -111,10 +111,6 @@ app.get('/stocks/:userid', (req, res) => {
       console.log(error)
     }
 
-    if (result.length === 0) {
-      res.send('Portfolio is empty')
-    }
-
     res.json(result)
   })
 })
