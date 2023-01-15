@@ -90,14 +90,33 @@ app.post('/users', (req, res) => {
           .status(400)
           .send('Password must include one number' )
   }; 
-  
-  mysqlConnection.query(`INSERT INTO stock_users_db.users (email, password) VALUES ('${email}', '${password}');`, (error, result, fields) => {
+
+  mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE email = '${email}';`, (error, result, fields) => {
     if (error) {
       console.log(error)
-    }
+    } 
+      
+    // check to see if an account with this email already exists
+    if (result.length !== 0) {
+      res.status(409).send(`Account already exists for ${email}`)
+    } else {
+        // POST request for new user
+        mysqlConnection.query(`INSERT INTO stock_users_db.users (email, password) VALUES ('${email}', '${password}');`, (error, result, fields) => {
+          if (error) {
+            console.log(error)
+          }
 
-    if (result.affectedRows === 1) {
-      res.send(`Account created successfully for ${email}`)
+          // if sign up is successful, return new user
+          if (result.affectedRows === 1) {
+            mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
+              if (error) {
+                console.log(error)
+              } else {
+                res.status(201).json(result)
+              }
+            })
+          }
+        })
     }
   })
 })
