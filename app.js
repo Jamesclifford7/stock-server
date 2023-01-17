@@ -13,7 +13,7 @@ const mysqlConnection = mysql.createConnection({
   host: process.env.AWS_HOST,
   user: process.env.AWS_USER,
   password: process.env.MYSQL_PASSWORD, 
-  database: AWS_DATABASE, 
+  database: process.env.AWS_DATABASE, 
   connectionLimit: 10, 
 });
 
