@@ -10,10 +10,10 @@ app.use(express.json());
 app.use(cors())
 
 const mysqlConnection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
+  host: process.env.AWS_HOST,
+  user: process.env.AWS_USER,
   password: process.env.MYSQL_PASSWORD, 
-  database: "stock_users_db", 
+  database: AWS_DATABASE, 
   connectionLimit: 10, 
 });
 
