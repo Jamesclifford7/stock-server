@@ -27,7 +27,7 @@ mysqlConnection.connect((error)=> {
 
 // get all users
 app.get('/users', (req, res) => {
-  mysqlConnection.query(`SELECT * FROM stock_users_db.users;`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM stock_database.users;`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -40,7 +40,7 @@ app.get('/users', (req, res) => {
 app.get('/users/:id', (req, res) => {
   const id = parseInt(req.params.id)
 
-  mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE id = ${id};`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM stock_database.users WHERE id = ${id};`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -52,7 +52,7 @@ app.get('/users/:id', (req, res) => {
 app.post('/login', (req, res) => {
   const {email, password} = req.body
 
-  mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM stock_database.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
     if (error) {
       console.log(error)
     } else if (result.length === 0) {
@@ -91,7 +91,7 @@ app.post('/users', (req, res) => {
           .send('Password must include one number' )
   }; 
 
-  mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE email = '${email}';`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM stock_database.users WHERE email = '${email}';`, (error, result, fields) => {
     if (error) {
       console.log(error)
     } 
@@ -101,14 +101,14 @@ app.post('/users', (req, res) => {
       res.status(409).send(`Account already exists for ${email}`)
     } else {
         // POST request for new user
-        mysqlConnection.query(`INSERT INTO stock_users_db.users (email, password) VALUES ('${email}', '${password}');`, (error, result, fields) => {
+        mysqlConnection.query(`INSERT INTO stock_database.users (email, password) VALUES ('${email}', '${password}');`, (error, result, fields) => {
           if (error) {
             console.log(error)
           }
 
           // if sign up is successful, return new user
           if (result.affectedRows === 1) {
-            mysqlConnection.query(`SELECT * FROM stock_users_db.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
+            mysqlConnection.query(`SELECT * FROM stock_database.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
               if (error) {
                 console.log(error)
               } else {
@@ -125,7 +125,7 @@ app.post('/users', (req, res) => {
 app.get('/stocks/:userid', (req, res) => {
   const id = parseInt(req.params.userid)
 
-  mysqlConnection.query(`SELECT * FROM stock_users_db.stocks WHERE user_id = '${id}';`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM stock_database.stocks WHERE user_id = '${id}';`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -139,14 +139,14 @@ app.post('/stocks/:userid', (req, res) => {
   const id = parseInt(req.params.userid)
   const { stock } = req.body
 
-  mysqlConnection.query(`INSERT INTO stock_users_db.stocks (user_id, stock_name) VALUES ('${id}', '${stock}');`, (error, result, fields) => {
+  mysqlConnection.query(`INSERT INTO stock_database.stocks (user_id, stock_name) VALUES ('${id}', '${stock}');`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
     
 
     if (result.affectedRows === 1) {
-      mysqlConnection.query('SELECT * FROM stock_users_db.stocks WHERE (id = LAST_INSERT_ID())', (error, result, fields) => {
+      mysqlConnection.query('SELECT * FROM stock_database.stocks WHERE (id = LAST_INSERT_ID())', (error, result, fields) => {
         if (error) {
           console.log(error)
         }
@@ -161,7 +161,7 @@ app.post('/stocks/:userid', (req, res) => {
 app.delete('/stocks/:stockid', (req, res) => {
   const id = parseInt(req.params.stockid)
 
-  mysqlConnection.query(`DELETE FROM stock_users_db.stocks WHERE (id = ${id});`, (error, result, fields) => {
+  mysqlConnection.query(`DELETE FROM stock_database.stocks WHERE (id = ${id});`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -176,7 +176,7 @@ app.delete('/stocks/:stockid', (req, res) => {
 app.delete('/users/:id', (req, res) => {
   const id = parseInt(req.params.id)
 
-  mysqlConnection.query(`DELETE FROM stock_users_db.users WHERE (id = ${id});`, (error, result, fields) => {
+  mysqlConnection.query(`DELETE FROM stock_database.users WHERE (id = ${id});`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
