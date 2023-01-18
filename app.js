@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 3000
 const cors = require('cors')
-const mysql = require('mysql2');
+const mysql = require('mysql');
 require('dotenv').config();
 const validator = require('email-validator')
 const PORT = process.env.PORT || 8000
@@ -38,7 +38,6 @@ app.get('/users', (req, res) => {
     }
     
     res.json(result); 
-    mysqlConnection.destroy()
   })
 })
 
