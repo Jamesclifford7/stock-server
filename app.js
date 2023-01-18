@@ -2,27 +2,28 @@ const express = require('express')
 const app = express()
 const port = 3000
 const cors = require('cors')
-const mysql = require('mysql');
+const mysql = require('mysql2');
 require('dotenv').config();
 const validator = require('email-validator')
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 3306
 
 app.use(express.json());
-app.use(cors())
+app.use(cors()); 
 
-const mysqlConnection = mysql.createPool({
+const mysqlConnection = mysql.createConnection({
   host: process.env.CLEARDB_HOST,
   user: process.env.CLEARDB_USER,
   password: process.env.CLEARDB_PASSWORD, 
   database: process.env.CLEARDB_DATABASE, 
   connectionLimit: 10, 
+  port: Number(process.env.PORT)
 });
 
-mysqlConnection.getConnection((error)=> {
+mysqlConnection.connect((error)=> {
   if (error) {
     console.log('Connection Failed', error);
   } else {
-    console.log('Connection Established Successfully')
+    console.log('Connection Established Successfully'); 
   }
 });
 
