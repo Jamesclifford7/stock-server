@@ -19,20 +19,19 @@ const mysqlConnection = mysql.createPool({
   port: Number(process.env.PORT)
 });
 
-mysqlConnection.getConnection((error, Connection)=> {
+mysqlConnection.getConnection((error, connection)=> {
   if (error) {
     console.log('Connection Failed', error);
   } else {
     // console.log('Connection Established Successfully'); 
-    app.get('/users', (req, res) => {
-      Connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
-        if (error) {
-          console.log(error)
-        }
-        
-        res.json(result); 
-      })
-    }); 
+
+    connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
+      if (error) {
+        console.log(error)
+      }
+      
+      res.json(result); 
+    })
   }
 });
 
@@ -41,15 +40,15 @@ app.get('/', (req, res) => {
 })
 
 // get all users
-// app.get('/users', (req, res) => {
-//   mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
-//     if (error) {
-//       console.log(error)
-//     }
+app.get('/users', (req, res) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
     
-//     res.json(result); 
-//   })
-// })
+    res.json(result); 
+  })
+})
 
 // get user by id
 app.get('/users/:id', (req, res) => {
