@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3306
 app.use(express.json());
 app.use(cors())
 
-const mysqlConnection = mysql.createPool({
+const mysqlConnection = mysql.createConnection({
   host: process.env.AWS_HOST,
   user: process.env.AWS_USER,
   password: process.env.MYSQL_PASSWORD, 
@@ -18,7 +18,7 @@ const mysqlConnection = mysql.createPool({
   connectionLimit: 10, 
 });
 
-mysqlConnection.getConnection((error)=> {
+mysqlConnection.connect((error)=> {
   if (error) {
     console.log('Connection Failed', error);
   } else {
