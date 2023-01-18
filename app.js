@@ -37,7 +37,8 @@ app.get('/users', (req, res) => {
       console.log(error)
     }
     
-    res.json(result)
+    res.json(result); 
+    mysqlConnection.release(); 
   })
 })
 
