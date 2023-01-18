@@ -19,19 +19,11 @@ const mysqlConnection = mysql.createPool({
   port: Number(process.env.PORT)
 });
 
-mysqlConnection.getConnection((error, connection)=> {
+mysqlConnection.getConnection((error)=> {
   if (error) {
     console.log('Connection Failed', error);
   } else {
-    // console.log('Connection Established Successfully'); 
-
-    connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
-      if (error) {
-        console.log(error)
-      }
-      
-      res.json(result); 
-    })
+    console.log('Connection Established Successfully'); 
   }
 });
 
