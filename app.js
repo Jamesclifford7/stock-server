@@ -5,7 +5,6 @@ const cors = require('cors')
 const mysql = require('mysql2');
 require('dotenv').config();
 const validator = require('email-validator')
-const PORT = process.env.PORT || 3306
 
 app.use(express.json());
 app.use(cors()); 
@@ -194,6 +193,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-app.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`)
+app.listen(process.env.PORT || 3306, () => {
+  console.log(`listening on port ${process.env.PORT}`)
 })
