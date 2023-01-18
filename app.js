@@ -5,7 +5,7 @@ const cors = require('cors')
 const mysql = require('mysql2');
 require('dotenv').config();
 const validator = require('email-validator')
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 3306
 
 app.use(express.json());
 app.use(cors())
