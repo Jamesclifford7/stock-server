@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3306
 app.use(express.json());
 app.use(cors()); 
 
-const mysqlConnection = mysql.createConnection({
+const mysqlConnection = mysql.createPool({
   host: process.env.CLEARDB_HOST,
   user: process.env.CLEARDB_USER,
   password: process.env.CLEARDB_PASSWORD, 
@@ -19,7 +19,7 @@ const mysqlConnection = mysql.createConnection({
   port: Number(process.env.PORT)
 });
 
-mysqlConnection.connect((error)=> {
+mysqlConnection.getConnection((error)=> {
   if (error) {
     console.log('Connection Failed', error);
   } else {
