@@ -14,7 +14,6 @@ const mysqlConnection = mysql.createPool({
   password: process.env.CLEARDB_PASSWORD, 
   database: process.env.CLEARDB_DATABASE, 
   connectionLimit: 10, 
-  port: process.env.PORT
 });
 
 mysqlConnection.getConnection((error)=> {
@@ -54,6 +53,7 @@ app.get('/users', (req, res) => {
     
     res.json(result); 
   })
+
 })
 
 // get user by id
