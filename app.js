@@ -192,8 +192,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-mysqlConnection.end(); 
-
 app.listen(process.env.PORT || 3306, '0.0.0.0', () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
