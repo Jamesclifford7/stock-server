@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const port = 3000
 const cors = require('cors')
 const mysql = require('mysql2');
 require('dotenv').config();
@@ -15,7 +14,7 @@ const mysqlConnection = mysql.createPool({
   password: process.env.CLEARDB_PASSWORD, 
   database: process.env.CLEARDB_DATABASE, 
   connectionLimit: 10, 
-  port: process.env.PORT
+  // port: process.env.PORT
 });
 
 mysqlConnection.getConnection((error)=> {
@@ -28,6 +27,22 @@ mysqlConnection.getConnection((error)=> {
 
 app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
+})
+
+app.get('/testusers', (req, res) => {
+  mysqlConnection.getConnection((error, connection) => {
+    if (error) {
+      console.log(error)
+    }
+    connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
+      if (error) {
+        console.log(error)
+      }
+      
+      res.json(result); 
+    })
+    connection.release()
+  })
 })
 
 // get all users
@@ -192,6 +207,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-app.listen(process.env.PORT || 8000, '0.0.0.0', () => {
+app.listen(process.env.PORT || 8000, () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
