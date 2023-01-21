@@ -9,11 +9,12 @@ app.use(express.json());
 app.use(cors()); 
 
 const mysqlConnection = mysql.createPool({
-  host: process.env.CLEARDB_HOST,
-  user: process.env.CLEARDB_USER,
-  password: process.env.CLEARDB_PASSWORD, 
-  database: process.env.CLEARDB_DATABASE, 
+  host: process.env.RAILWAY_HOST,
+  user: process.env.RAILWAY_USER,
+  password: process.env.RAILWAY_PASSWORD, 
+  database: process.env.RAILWAY_DATABASE, 
   connectionLimit: 10, 
+  port: process.env.PORT
 });
 
 mysqlConnection.getConnection((error)=> {
@@ -33,7 +34,7 @@ app.get('/testusers', (req, res) => {
     if (error) {
       console.log(error)
     }
-    connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
+    connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
       if (error) {
         console.log(error)
       }
@@ -46,7 +47,7 @@ app.get('/testusers', (req, res) => {
 
 // get all users
 app.get('/users', (req, res) => {
-  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -60,7 +61,7 @@ app.get('/users', (req, res) => {
 app.get('/users/:id', (req, res) => {
   const id = parseInt(req.params.id)
 
-  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users WHERE id = ${id};`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users WHERE id = ${id};`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -72,7 +73,7 @@ app.get('/users/:id', (req, res) => {
 app.post('/login', (req, res) => {
   const {email, password} = req.body
 
-  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
     if (error) {
       console.log(error)
     } else if (result.length === 0) {
@@ -111,7 +112,7 @@ app.post('/users', (req, res) => {
           .send('Password must include one number' )
   }; 
 
-  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users WHERE email = '${email}';`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users WHERE email = '${email}';`, (error, result, fields) => {
     if (error) {
       console.log(error)
     } 
@@ -121,14 +122,14 @@ app.post('/users', (req, res) => {
       res.status(409).send(`Account already exists for ${email}`)
     } else {
         // POST request for new user
-        mysqlConnection.query(`INSERT INTO ${process.env.CLEARDB_DATABASE}.users (email, password) VALUES ('${email}', '${password}');`, (error, result, fields) => {
+        mysqlConnection.query(`INSERT INTO ${process.env.RAILWAY_DATABASE}.users (email, password) VALUES ('${email}', '${password}');`, (error, result, fields) => {
           if (error) {
             console.log(error)
           }
 
           // if sign up is successful, return new user
           if (result.affectedRows === 1) {
-            mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
+            mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users WHERE email = '${email}' AND password = '${password}';`, (error, result, fields) => {
               if (error) {
                 console.log(error)
               } else {
@@ -145,7 +146,7 @@ app.post('/users', (req, res) => {
 app.get('/stocks/:userid', (req, res) => {
   const id = parseInt(req.params.userid)
 
-  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.stocks WHERE user_id = '${id}';`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.stocks WHERE user_id = '${id}';`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -159,14 +160,14 @@ app.post('/stocks/:userid', (req, res) => {
   const id = parseInt(req.params.userid)
   const { stock } = req.body
 
-  mysqlConnection.query(`INSERT INTO ${process.env.CLEARDB_DATABASE}.stocks (user_id, stock_name) VALUES ('${id}', '${stock}');`, (error, result, fields) => {
+  mysqlConnection.query(`INSERT INTO ${process.env.RAILWAY_DATABASE}.stocks (user_id, stock_name) VALUES ('${id}', '${stock}');`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
     
 
     if (result.affectedRows === 1) {
-      mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.stocks WHERE (id = LAST_INSERT_ID())`, (error, result, fields) => {
+      mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.stocks WHERE (id = LAST_INSERT_ID())`, (error, result, fields) => {
         if (error) {
           console.log(error)
         }
@@ -181,7 +182,7 @@ app.post('/stocks/:userid', (req, res) => {
 app.delete('/stocks/:stockid', (req, res) => {
   const id = parseInt(req.params.stockid)
 
-  mysqlConnection.query(`DELETE FROM ${process.env.CLEARDB_DATABASE}.stocks WHERE (id = ${id});`, (error, result, fields) => {
+  mysqlConnection.query(`DELETE FROM ${process.env.RAILWAY_DATABASE}.stocks WHERE (id = ${id});`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -196,7 +197,7 @@ app.delete('/stocks/:stockid', (req, res) => {
 app.delete('/users/:id', (req, res) => {
   const id = parseInt(req.params.id)
 
-  mysqlConnection.query(`DELETE FROM ${process.env.CLEARDB_DATABASE}.users WHERE (id = ${id});`, (error, result, fields) => {
+  mysqlConnection.query(`DELETE FROM ${process.env.RAILWAY_DATABASE}.users WHERE (id = ${id});`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -207,6 +208,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-app.listen(process.env.PORT || 3306, '0.0.0.0', () => {
+app.listen(process.env.PORT || 6200, '0.0.0.0', () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
