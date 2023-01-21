@@ -14,6 +14,7 @@ const mysqlConnection = mysql.createPool({
   password: process.env.RAILWAY_PASSWORD, 
   database: process.env.RAILWAY_DATABASE, 
   connectionLimit: 10, 
+  socketPath: process.env.SOCKET_PATH
 });
 
 mysqlConnection.getConnection((error)=> {
