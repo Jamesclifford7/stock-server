@@ -14,7 +14,7 @@ const mysqlConnection = mysql.createConnection({
   password: process.env.RAILWAY_PASSWORD, 
   database: process.env.RAILWAY_DATABASE, 
   connectionLimit: 10, 
-  port: process.env.PORT,
+  port: Number(process.env.PORT),
   connectTimeout: 60000
 });
 
@@ -210,6 +210,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-app.listen(process.env.PORT || 6200, '0.0.0.0',  () => {
+app.listen(Number(process.env.PORT) || 6200, '0.0.0.0',  () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
