@@ -207,6 +207,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-app.listen(process.env.PORT || 6200, '0.0.0.0', () => {
+app.listen(`0.0.0.0:${process.env.PORT}`, () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
