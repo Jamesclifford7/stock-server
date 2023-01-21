@@ -8,17 +8,17 @@ const validator = require('email-validator')
 app.use(express.json());
 app.use(cors()); 
 
-const mysqlConnection = mysql.createPool({
+const mysqlConnection = mysql.createConnection({
   host: process.env.RAILWAY_HOST,
   user: process.env.RAILWAY_USER,
   password: process.env.RAILWAY_PASSWORD, 
   database: process.env.RAILWAY_DATABASE, 
   connectionLimit: 10, 
-  socketPath: process.env.SOCKET_PATH, 
+  port: process.env.PORT,
   connectTimeout: 60000
 });
 
-mysqlConnection.getConnection((error)=> {
+mysqlConnection.connect((error)=> {
   if (error) {
     console.log('Connection Failed', error);
   } else {
@@ -30,21 +30,21 @@ app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
 })
 
-app.get('/testusers', (req, res) => {
-  mysqlConnection.getConnection((error, connection) => {
-    if (error) {
-      console.log(error)
-    }
-    connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-      if (error) {
-        console.log(error)
-      }
+// app.get('/testusers', (req, res) => {
+//   mysqlConnection.getConnection((error, connection) => {
+//     if (error) {
+//       console.log(error)
+//     }
+//     connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+//       if (error) {
+//         console.log(error)
+//       }
       
-      res.json(result); 
-    })
-    connection.release()
-  })
-})
+//       res.json(result); 
+//     })
+//     connection.release()
+//   })
+// })
 
 // get all users
 app.get('/users', (req, res) => {
@@ -209,6 +209,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-app.listen(process.env.PORT || 3306, '0.0.0.0',  () => {
+app.listen(process.env.PORT || 6200, '0.0.0.0',  () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
