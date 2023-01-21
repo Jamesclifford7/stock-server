@@ -14,7 +14,8 @@ const mysqlConnection = mysql.createPool({
   password: process.env.RAILWAY_PASSWORD, 
   database: process.env.RAILWAY_DATABASE, 
   connectionLimit: 10, 
-  socketPath: process.env.SOCKET_PATH
+  socketPath: process.env.SOCKET_PATH, 
+  port: process.env.PORT
 });
 
 mysqlConnection.getConnection((error)=> {
@@ -208,6 +209,6 @@ app.delete('/users/:id', (req, res) => {
   })
 })
 
-app.listen(process.env.PORT || 6200, '0.0.0.0',  () => {
+app.listen(process.env.PORT || 3306, '0.0.0.0',  () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
