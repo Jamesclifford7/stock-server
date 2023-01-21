@@ -34,15 +34,16 @@ app.get('/testusers', (req, res) => {
   mysqlConnection.getConnection((error, connection) => {
     if (error) {
       console.log(error)
+    } else {
+      connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+        if (error) {
+          console.log(error)
+        }
+        
+        res.json(result); 
+      })
+      connection.release()
     }
-    connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-      if (error) {
-        console.log(error)
-      }
-      
-      res.json(result); 
-    })
-    connection.release()
   })
 })
 
