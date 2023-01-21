@@ -54,8 +54,9 @@ app.get('/users', (req, res) => {
     }
     
     res.json(result); 
-  })
+  }); 
 
+  mysqlConnection.end(); 
 })
 
 // get user by id
