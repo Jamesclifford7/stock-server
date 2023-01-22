@@ -16,7 +16,14 @@ const sequelize = new Sequelize(
   {
     host: process.env.RAILWAY_HOST, 
     dialect: 'mysql', 
-    port: Number(process.env.PORT)
+    port: Number(process.env.PORT), 
+    pool: {
+      max: 15,
+      min: 5,
+      idle: 20000,
+      evict: 15000,
+      acquire: 30000
+    },
   }
 )
 
@@ -73,7 +80,8 @@ app.get('/', (req, res) => {
 app.get('/users', async (req, res) => {
 
   const [users] = await sequelize.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`); 
-  res.json(users)
+  res.json(users); 
+  sequelize.close(); 
 
   // await sequelize.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
   //   if (error) {
