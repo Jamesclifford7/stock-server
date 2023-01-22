@@ -9,44 +9,15 @@ const { Sequelize } = require('sequelize');
 app.use(express.json());
 app.use(cors()); 
 
-const sequelize = new Sequelize(
-  process.env.RAILWAY_DATABASE, 
-  process.env.RAILWAY_USER,
-  process.env.RAILWAY_PASSWORD, 
-  {
-    host: process.env.RAILWAY_HOST, 
-    dialect: 'mysql', 
-    port: Number(process.env.PORT), 
-    pool: {
-      max: 15,
-      min: 5,
-      idle: 20000,
-      evict: 15000,
-      acquire: 30000
-    },
-  }
-)
-
-async function connection (){
-  try {
-      await sequelize.authenticate();
-      console.log('Connection has been established successfully.');
-    } catch (error) {
-      console.log('Unable to connect to the database:', error);
-    }
-}
-
-connection()
-
-// const pool = mysql.createPool({
-//   host: process.env.RAILWAY_HOST,
-//   user: process.env.RAILWAY_USER,
-//   password: process.env.RAILWAY_PASSWORD, 
-//   database: process.env.RAILWAY_DATABASE, 
-//   connectionLimit: 10, 
-//   port: Number(process.env.PORT),
-//   connectTimeout: 60000
-// });
+const pool = mysql.createPool({
+  host: process.env.RAILWAY_HOST,
+  user: process.env.RAILWAY_USER,
+  password: process.env.RAILWAY_PASSWORD, 
+  database: process.env.RAILWAY_DATABASE, 
+  connectionLimit: 10, 
+  port: Number(process.env.PORT),
+  connectTimeout: 60000
+});
 
 // mysqlConnection.getConnection((error)=> {
 //   if (error) {
@@ -77,35 +48,19 @@ app.get('/', (req, res) => {
 //   })
 // })
 
-app.get('/users', async (req, res) => {
 
-  const [users] = await sequelize.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`); 
-  res.json(users); 
-  sequelize.close(); 
-
-  // await sequelize.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-  //   if (error) {
-  //     console.log(error)
-  //   }
+// get all users
+app.get('/users', (req, res) => {
+  pool.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
     
-  //   res.json(result); 
-  // }); 
+    res.json(result); 
+  }); 
 
   // mysqlConnection.end(); 
 })
-
-// // get all users
-// app.get('/users', (req, res) => {
-//   pool.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-//     if (error) {
-//       console.log(error)
-//     }
-    
-//     res.json(result); 
-//   }); 
-
-//   // mysqlConnection.end(); 
-// })
 
 // // get user by id
 // app.get('/users/:id', (req, res) => {
