@@ -18,7 +18,7 @@ const pool = mysql.createPool({
   connectTimeout: 60000
 });
 
-// mysqlConnection.getConnection((error)=> {
+// pool.getConnection((error)=> {
 //   if (error) {
 //     console.log('Connection Failed', error);
 //   } else {
@@ -30,22 +30,22 @@ app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
 })
 
-// app.get('/testusers', (req, res) => {
-//   pool.getConnection((error, connection) => {
-//     if (error) {
-//       console.log(error)
-//     } else {
-//       connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
-//         if (error) {
-//           console.log(error)
-//         }
+app.get('/testusers', (req, res) => {
+  pool.getConnection((error, connection) => {
+    if (error) {
+      console.log(error)
+    } else {
+      connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
+        if (error) {
+          console.log(error)
+        }
         
-//         res.json(result); 
-//       })
-//       connection.release()
-//     }
-//   })
-// })
+        res.json(result); 
+      })
+      connection.release()
+    }
+  })
+})
 
 
 // get all users
