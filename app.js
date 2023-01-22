@@ -15,7 +15,8 @@ const mysqlConnection = mysql.createConnection({
   database: process.env.RAILWAY_DATABASE, 
   connectionLimit: 10, 
   port: Number(process.env.PORT),
-  connectTimeout: 60000
+  connectTimeout: 60000, 
+  socketPath: '/var/run/mysqld/mysqld.sock'
 });
 
 mysqlConnection.connect((error)=> {
@@ -58,7 +59,6 @@ app.get('/users', async (req, res) => {
     res.json(result); 
   })
 })
-
 
 
 // // get user by id
