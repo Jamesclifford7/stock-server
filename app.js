@@ -9,7 +9,7 @@ const validator = require('email-validator')
 app.use(express.json());
 app.use(cors()); 
 
-const mysqlConnection = mysql.createConnection({
+const mysqlConnection = mysql.createPool({
   host: process.env.RAILWAY_HOST,
   user: process.env.RAILWAY_USER,
   password: process.env.RAILWAY_PASSWORD, 
@@ -19,7 +19,7 @@ const mysqlConnection = mysql.createConnection({
   connectTimeout: 60000, 
 });
 
-mysqlConnection.connect((error)=> {
+mysqlConnection.getConnection((error)=> {
   if (error) {
     console.log('Connection Failed', error.message);
   }
@@ -76,6 +76,8 @@ app.get('/users', async (req, res) => {
     res.json(result); 
   })
 })
+
+
 
 
 // // get user by id
