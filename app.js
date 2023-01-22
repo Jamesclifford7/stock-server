@@ -30,35 +30,35 @@ app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
 })
 
-// app.get('/testusers', (req, res) => {
-//   mysqlConnection.getConnection((error, connection) => {
-//     if (error) {
-//       console.log(error)
-//     } else {
-//       connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-//         if (error) {
-//           console.log(error)
-//         }
-        
-//         res.json(result); 
-//       })
-//       connection.release()
-//     }
-//   })
-// })
-
-// get all users
-app.get('/users', (req, res) => {
-  pool.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+app.get('/testusers', (req, res) => {
+  pool.getConnection((error, connection) => {
     if (error) {
       console.log(error)
+    } else {
+      connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
+        if (error) {
+          console.log(error)
+        }
+        
+        res.json(result); 
+      })
+      connection.release()
     }
-    
-    res.json(result); 
-  }); 
-
-  // mysqlConnection.end(); 
+  })
 })
+
+// // get all users
+// app.get('/users', (req, res) => {
+//   pool.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+//     if (error) {
+//       console.log(error)
+//     }
+    
+//     res.json(result); 
+//   }); 
+
+//   // mysqlConnection.end(); 
+// })
 
 // // get user by id
 // app.get('/users/:id', (req, res) => {
