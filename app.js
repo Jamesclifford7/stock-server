@@ -2,18 +2,17 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mysql = require('mysql2');
-const dotenv = require('dotenv')
-dotenv.config()
+require('dotenv').config()
 const validator = require('email-validator')
 
 app.use(express.json());
 app.use(cors()); 
 
 const mysqlConnection = mysql.createPool({
-  host: process.env.RAILWAY_HOST,
-  user: process.env.RAILWAY_USER,
-  password: process.env.RAILWAY_PASSWORD, 
-  database: process.env.RAILWAY_DATABASE, 
+  host: process.env.CLEARDB_HOST,
+  user: process.env.CLEARDB_USER,
+  password: process.env.CLEARDB_PASSWORD, 
+  database: process.env.CLEARDB_DATABASE, 
   connectionLimit: 10, 
   port: Number(process.env.PORT),
   connectTimeout: 60000, 
@@ -36,7 +35,7 @@ app.get('/testusers', (req, res) => {
     if (error) {
       console.log(error.message)
     } else {
-      connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
+      connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result) => {
         if (error) {
           console.log(error)
         }
@@ -50,7 +49,7 @@ app.get('/testusers', (req, res) => {
 
 // get all users
 app.get('/users', async (req, res) => {
-  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
@@ -213,6 +212,6 @@ app.get('/users', async (req, res) => {
 //   })
 // })
 
-app.listen(Number(process.env.PORT) || 6200, '0.0.0.0',  () => {
+app.listen(Number(process.env.PORT) || 3306, '0.0.0.0',  () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
