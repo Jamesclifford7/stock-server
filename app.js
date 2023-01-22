@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mysql = require('mysql2');
-require('dotenv').config();
+const dotenv = require('dotenv')
+dotenv.config()
 const validator = require('email-validator')
 
 app.use(express.json());
@@ -16,7 +17,6 @@ const mysqlConnection = mysql.createConnection({
   connectionLimit: 10, 
   port: Number(process.env.PORT),
   connectTimeout: 60000, 
-  socketPath: '/var/run/mysqld/mysqld.sock'
 });
 
 mysqlConnection.connect((error)=> {
