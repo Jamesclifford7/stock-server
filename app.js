@@ -4,19 +4,42 @@ const cors = require('cors')
 const mysql = require('mysql2');
 require('dotenv').config();
 const validator = require('email-validator')
+const { Sequelize } = require('sequelize');
 
 app.use(express.json());
 app.use(cors()); 
 
-const pool = mysql.createPool({
-  host: process.env.RAILWAY_HOST,
-  user: process.env.RAILWAY_USER,
-  password: process.env.RAILWAY_PASSWORD, 
-  database: process.env.RAILWAY_DATABASE, 
-  connectionLimit: 10, 
-  port: Number(process.env.PORT),
-  connectTimeout: 60000
-});
+const sequelize = new Sequelize(
+  process.env.RAILWAY_DATABASE, 
+  process.env.RAILWAY_USER,
+  process.env.RAILWAY_PASSWORD, 
+  {
+    host: process.env.RAILWAY_HOST, 
+    dialect: 'mysql', 
+    port: Number(process.env.PORT)
+  }
+)
+
+async function connection (){
+  try {
+      await sequelize.authenticate();
+      console.log('Connection has been established successfully.');
+    } catch (error) {
+      console.log('Unable to connect to the database:', error);
+    }
+}
+
+connection()
+
+// const pool = mysql.createPool({
+//   host: process.env.RAILWAY_HOST,
+//   user: process.env.RAILWAY_USER,
+//   password: process.env.RAILWAY_PASSWORD, 
+//   database: process.env.RAILWAY_DATABASE, 
+//   connectionLimit: 10, 
+//   port: Number(process.env.PORT),
+//   connectTimeout: 60000
+// });
 
 // mysqlConnection.getConnection((error)=> {
 //   if (error) {
@@ -30,21 +53,37 @@ app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
 })
 
-app.get('/testusers', (req, res) => {
-  pool.getConnection((error, connection) => {
-    if (error) {
-      console.log(error)
-    } else {
-      connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
+// app.get('/testusers', (req, res) => {
+//   pool.getConnection((error, connection) => {
+//     if (error) {
+//       console.log(error)
+//     } else {
+//       connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
+//         if (error) {
+//           console.log(error)
+//         }
         
-        res.json(result); 
-      })
-      connection.release()
-    }
-  })
+//         res.json(result); 
+//       })
+//       connection.release()
+//     }
+//   })
+// })
+
+app.get('/users', async (req, res) => {
+
+  const [users] = await sequelize.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`); 
+  res.json(users)
+
+  // await sequelize.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+  //   if (error) {
+  //     console.log(error)
+  //   }
+    
+  //   res.json(result); 
+  // }); 
+
+  // mysqlConnection.end(); 
 })
 
 // // get all users
