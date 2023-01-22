@@ -48,41 +48,34 @@ app.get('/', (req, res) => {
 //   })
 // })
 
-app.get('/users', async (req, res) => {
+// app.get('/users', async (req, res) => {
 
-  const response = await new Promise((resolve, reject) => {
-      mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-      if (error) {
-        // console.log(error)
-        reject(error.message)
-      }
+//   const response = await new Promise((resolve, reject) => {
+//       mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+//       if (error) {
+//         // console.log(error)
+//         reject(error.message)
+//       }
       
-      resolve(result)
-      // res.json(result); 
-    })
-  })
+//       resolve(result)
+//       // res.json(result); 
+//     })
+//   })
 
-  res.json(response)
-  // mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-  //   if (error) {
-  //     console.log(error)
-  //   }
-    
-  //   res.json(result); 
-  // })
-})
+//   res.json(response)
+// })
 
 
 // get all users
-// app.get('/users', async (req, res) => {
-//   mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-//     if (error) {
-//       console.log(error)
-//     }
+app.get('/users', async (req, res) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
     
-//     res.json(result); 
-//   })
-// })
+    res.json(result); 
+  })
+})
 
 
 // // get user by id
