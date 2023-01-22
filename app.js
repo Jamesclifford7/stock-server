@@ -8,7 +8,7 @@ const validator = require('email-validator')
 app.use(express.json());
 app.use(cors()); 
 
-const pool = mysql.createPool({
+const mysqlConnection = mysql.createConnection({
   host: process.env.RAILWAY_HOST,
   user: process.env.RAILWAY_USER,
   password: process.env.RAILWAY_PASSWORD, 
@@ -18,48 +18,48 @@ const pool = mysql.createPool({
   connectTimeout: 60000
 });
 
-// pool.getConnection((error)=> {
-//   if (error) {
-//     console.log('Connection Failed', error);
-//   } else {
-//     console.log('Connection Established Successfully'); 
-//   }
-// });
+mysqlConnection.connect((error)=> {
+  if (error) {
+    console.log('Connection Failed', error);
+  } else {
+    console.log('Connection Established Successfully'); 
+  }
+});
 
 app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
 })
 
-app.get('/testusers', (req, res) => {
-  pool.getConnection((error, connection) => {
-    if (error) {
-      console.log(error)
-    } else {
-      connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
+// app.get('/testusers', (req, res) => {
+//   pool.getConnection((error, connection) => {
+//     if (error) {
+//       console.log(error)
+//     } else {
+//       connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
+//         if (error) {
+//           console.log(error)
+//         }
         
-        res.json(result); 
-      })
-      connection.release()
-    }
-  })
-})
+//         res.json(result); 
+//       })
+//       connection.release()
+//     }
+//   })
+// })
 
 
 // get all users
-app.get('/users', (req, res) => {
-  pool.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
+app.get('/users', async (req, res) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
     if (error) {
       console.log(error)
     }
     
     res.json(result); 
-  }); 
-
-  // mysqlConnection.end(); 
+  })
 })
+
+
 
 // // get user by id
 // app.get('/users/:id', (req, res) => {
