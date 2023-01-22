@@ -4,7 +4,6 @@ const cors = require('cors')
 const mysql = require('mysql2');
 require('dotenv').config();
 const validator = require('email-validator')
-const { Sequelize } = require('sequelize');
 
 app.use(express.json());
 app.use(cors()); 
