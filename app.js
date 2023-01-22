@@ -22,49 +22,31 @@ const mysqlConnection = mysql.createPool({
 mysqlConnection.getConnection((error)=> {
   if (error) {
     console.log('Connection Failed', error.message);
-  }
-
-  console.log('Connection Established Successfully'); 
+  } else {
+    console.log('Connection Established Successfully'); 
+  }; 
 });
 
 app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
 })
 
-// app.get('/testusers', (req, res) => {
-//   pool.getConnection((error, connection) => {
-//     if (error) {
-//       console.log(error)
-//     } else {
-//       connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
-//         if (error) {
-//           console.log(error)
-//         }
+app.get('/testusers', (req, res) => {
+  mysqlConnection.getConnection((error, connection) => {
+    if (error) {
+      console.log(error.message)
+    } else {
+      connection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result) => {
+        if (error) {
+          console.log(error)
+        }
+        console.log('result', result)
+        res.json(result); 
         
-//         res.json(result); 
-//       })
-//       connection.release()
-//     }
-//   })
-// })
-
-// app.get('/users', async (req, res) => {
-
-//   const response = await new Promise((resolve, reject) => {
-//       mysqlConnection.query(`SELECT * FROM ${process.env.RAILWAY_DATABASE}.users;`, (error, result, fields) => {
-//       if (error) {
-//         // console.log(error)
-//         reject(error.message)
-//       }
-      
-//       resolve(result)
-//       // res.json(result); 
-//     })
-//   })
-
-//   res.json(response)
-// })
-
+      }); 
+    }
+  })
+})
 
 // get all users
 app.get('/users', async (req, res) => {
@@ -72,7 +54,7 @@ app.get('/users', async (req, res) => {
     if (error) {
       console.log(error)
     }
-    
+    console.log('result', result)
     res.json(result); 
   })
 })
