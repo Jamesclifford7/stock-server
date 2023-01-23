@@ -8,17 +8,15 @@ const validator = require('email-validator')
 app.use(express.json());
 app.use(cors()); 
 
-// const mysqlConnection = mysql.createPool({
-//   host: process.env.CLEARDB_HOST,
-//   user: process.env.CLEARDB_USER,
-//   password: process.env.CLEARDB_PASSWORD, 
-//   database: process.env.CLEARDB_DATABASE, 
-//   connectionLimit: 10, 
-//   port: Number(process.env.PORT),
-//   connectTimeout: 60000, 
-// });
-
-const mysqlConnection = mysql.createPool(process.env.CLEAR_DATABASE_URL);
+const mysqlConnection = mysql.createPool({
+  host: process.env.CLEARDB_HOST,
+  user: process.env.CLEARDB_USER,
+  password: process.env.CLEARDB_PASSWORD, 
+  database: process.env.CLEARDB_DATABASE, 
+  connectionLimit: 10, 
+  port: Number(process.env.PORT),
+  connectTimeout: 60000, 
+});
 
 mysqlConnection.getConnection((error)=> {
   if (error) {
