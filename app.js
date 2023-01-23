@@ -16,6 +16,7 @@ const mysqlConnection = mysql.createPool({
   connectionLimit: 10, 
   port: Number(process.env.PORT),
   connectTimeout: 60000, 
+  socketPath: '/var/run/mysqld/mysqld.sock'
 });
 
 mysqlConnection.getConnection((error)=> {
