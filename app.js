@@ -14,7 +14,7 @@ const mysqlConnection = mysql.createPool({
   password: process.env.CLEARDB_PASSWORD, 
   database: process.env.CLEARDB_DATABASE, 
   connectionLimit: 10, 
-  // port: Number(process.env.PORT),
+  port: Number(process.env.PORT),
   connectTimeout: 60000, 
 });
 
