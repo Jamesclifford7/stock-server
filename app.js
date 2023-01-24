@@ -14,7 +14,6 @@ const mysqlConnection = mysql.createPool({
   password: process.env.CLEARDB_PASSWORD, 
   database: process.env.CLEARDB_DATABASE, 
   connectionLimit: 10, 
-  port: Number(process.env.PORT),
   connectTimeout: 60000, 
 });
 
@@ -30,33 +29,33 @@ app.get('/', (req, res) => {
   res.send('welcome to the stock analyzer server')
 })
 
-// app.get('/testusers', (req, res) => {
-//   mysqlConnection.getConnection((error, connection) => {
-//     if (error) {
-//       console.log(error.message)
-//     } else {
-//       connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result) => {
-//         if (error) {
-//           console.log(error)
-//         }
-//         console.log('result', result)
-//         res.json(result); 
-//         connection.release(); 
-//       }); 
-//     }
-//   })
-// })
+app.get('/testusers', (req, res) => {
+  mysqlConnection.getConnection((error, connection) => {
+    if (error) {
+      console.log(error.message)
+    } else {
+      connection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result) => {
+        if (error) {
+          console.log(error)
+        }
+        console.log('result', result)
+        res.json(result); 
+        connection.release(); 
+      }); 
+    }
+  })
+})
 
-// // get all users
-// app.get('/users', async (req, res) => {
-//   mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
-//     if (error) {
-//       console.log(error)
-//     }
-//     console.log('result', result)
-//     res.json(result); 
-//   })
-// })
+// get all users
+app.get('/users', async (req, res) => {
+  mysqlConnection.query(`SELECT * FROM ${process.env.CLEARDB_DATABASE}.users;`, (error, result, fields) => {
+    if (error) {
+      console.log(error)
+    }
+    console.log('result', result)
+    res.json(result); 
+  })
+})
 
 
 
@@ -211,6 +210,6 @@ app.get('/', (req, res) => {
 //   })
 // })
 
-app.listen(Number(process.env.PORT) || 3306, '0.0.0.0',  () => {
+app.listen(process.env.PORT || 8080, '0.0.0.0',  () => {
   console.log(`listening on port ${process.env.PORT}`)
 })
